@@ -6,7 +6,9 @@ using BaseEFAPI.MVCS.Services.Context;
 using BaseEFAPI.MVCS.Services.Registration;
 using BaseEFAPI.MVCS.Services.Registration.Interfaces;
 using BaseEFAPI.MVCS.Services.SignIn.Implementations;
+using BaseEFAPI.MVCS.Services.SignIn.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -50,6 +52,8 @@ SymmetricSecurityKey signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetByte
 SymmetricSecurityKey encryptionSecurityKey = new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey));
 
 // ADD AUTHENTICATION SERVICES TO THE CONTAINER
+builder.Services.AddApplicationIdentity();
+
 builder.Services
     .AddAuthentication(
         JwtBearerDefaults.AuthenticationScheme
@@ -177,21 +181,13 @@ else
 
 WebApplication app = builder.Build();
 
-if (args.Contains("--initialize-database", StringComparer.Ordinal))
+if (args.Contains("--upgrade-identity", StringComparer.Ordinal))
 {
-    if (args.Contains("--upgrade-identity", StringComparer.Ordinal))
-        throw new InvalidOperationException("Run database initialization and the existing-database upgrade separately.");
-
     await using AsyncServiceScope scope = app.Services.CreateAsyncScope();
-    var db = scope.ServiceProvider.GetRequiredService<RegistrationDbContext>();
-    bool created = await db.Database.EnsureCreatedAsync();
-    if (!created)
-        throw new InvalidOperationException(
-            "Database initialization was skipped because tables already exist. " +
-            "Check DefaultConnection, the schema, and the case-sensitive ApplicationUser table name. " +
-            "Existing databases require a reviewed schema migration; initialization does not upgrade them.");
-
-    app.Logger.LogInformation("Database initialized with ApplicationUser and the Identity tables.");
+    await BaseEFAPI.Database.IdentityDatabaseUpgrade.RunAsync(
+        scope.ServiceProvider.GetRequiredService<RegistrationDbContext>(),
+        scope.ServiceProvider.GetRequiredService<ILookupNormalizer>());
+    app.Logger.LogInformation("Identity database upgrade completed.");
     return;
 }
 

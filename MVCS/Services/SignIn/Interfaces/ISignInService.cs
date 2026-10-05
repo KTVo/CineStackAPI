@@ -1,8 +1,8 @@
 using BaseEFAPI.MVCS.Models.SignIn;
 
-namespace BaseEFAPI.MVCS.Services.SignIn.Implementations;
+namespace BaseEFAPI.MVCS.Services.SignIn.Interfaces;
 
 public interface ISignInService
 {
-    Task<SignInResponseModel> SignInUserAsync(SignInRequestModel model);
+    Task<SignInResponseModel> SignInAsync(SignInRequestModel model);
 }

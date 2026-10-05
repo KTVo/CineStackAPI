@@ -1,49 +1,21 @@
-using BaseEFAPI.MVCS.Services.Context;
 using BaseEFAPI.MVCS.Services.Registration.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-public sealed class RegistrationService : IRegistrationService
+public sealed class RegistrationService(UserManager<ApplicationUserModel> userManager) : IRegistrationService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher<ApplicationUserModel> _passwordHasher = new PasswordHasher<ApplicationUserModel>();
-
-    public RegistrationService(IUserRepository userRepository)
+    public async Task<SignUpResponseModel> RegisterUserAsync(ApplicationUserModel user, string password)
     {
-        _userRepository = userRepository;
-        ValidateServices();
-    } 
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentException.ThrowIfNullOrWhiteSpace(password);
 
-    private bool ValidateServices()
-    {
-        if (_userRepository == null) { throw new ArgumentNullException("UserRepository is not initialized."); }
-
-        return true;
-    }
-
-    /// <summary>
-    /// Creates a new user in the database.
-    /// </summary>
-    /// <param name="user"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception> <summary>
-    /// 
-    /// </summary>
-    /// <param name="user"></param>
-    /// <returns></returns>
-    public async Task<SignUpResponseModel> RegisterUserAsync(ApplicationUserModel model)
-    {
-        // NULL CHECKS
-        if (model == null) { throw new ArgumentNullException("User model is null."); }
-        if (string.IsNullOrEmpty(model.UserName)) { throw new ArgumentNullException("Username is null!"); }
-        if (string.IsNullOrEmpty(model.Email)) { throw new ArgumentNullException("Email is null!"); }
-        if (string.IsNullOrEmpty(model.PasswordHash)) { throw new ArgumentNullException("HashedPassword is null!"); }
-        if (string.IsNullOrEmpty(model.UserType)) { throw new ArgumentNullException("UserType is null!"); }
-
-        model.PasswordHash = _passwordHasher.HashPassword(model, model.PasswordHash);
-
-        // ADD USER TO DATABASE
-        SignUpResponseModel response = await _userRepository.AddUserAsync(model);
-
-        return response;
+        // Identity validates the password and user, hashes the password, normalizes
+        // identifiers, initializes stamps/lockout, and persists through its EF store.
+        IdentityResult result = await userManager.CreateAsync(user, password);
+        return new SignUpResponseModel
+        {
+            IsSuccess = result.Succeeded,
+            Message = result.Succeeded ? ExternalMessages.SignUpSuccess : ExternalMessages.SignUpFailure,
+            Errors = result.Succeeded ? null : result.Errors.Select(error => error.Description).ToList()
+        };
     }
 }

@@ -55,9 +55,9 @@ public sealed class JwtTokenService : IJwtTokenService
             // CREATE CLAIMS FOR JWT TOKEN
             List<Claim> claims = new List<Claim>
             {
-                new(JwtRegisteredClaimNames.Sub, userName),
+                new(JwtRegisteredClaimNames.Sub, userId),
                 new(JwtRegisteredClaimNames.Email, userEmail),
-                new(JwtRegisteredClaimNames.Typ, userType),
+                new("role", userType),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -174,7 +174,7 @@ public sealed class JwtTokenService : IJwtTokenService
 
                     ClockSkew = TimeSpan.FromSeconds(30),
 
-                    RoleClaimType = ClaimTypes.Role
+                    RoleClaimType = "role"
                 };
 
 

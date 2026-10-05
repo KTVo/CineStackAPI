@@ -1,65 +1,80 @@
 using BaseEFAPI.MVCS.Models.Authorization;
 using BaseEFAPI.MVCS.Models.SignIn;
 using BaseEFAPI.MVCS.Services.Authentication.Interfaces;
+using BaseEFAPI.MVCS.Services.SignIn.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace BaseEFAPI.MVCS.Services.SignIn.Implementations;
 
-public sealed class SignInService(IJwtTokenService jwtTokenService, IUserRepository userRepository) : ISignInService
+public sealed class SignInService(
+    IJwtTokenService jwtTokenService,
+    UserManager<ApplicationUserModel> userManager,
+    SignInManager<ApplicationUserModel> signInManager) : ISignInService
 {
-    private readonly IJwtTokenService _jwtTokenService = jwtTokenService ?? throw new ArgumentNullException(nameof(jwtTokenService));
-    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-    private readonly IPasswordHasher<ApplicationUserModel> _passwordHasher = new PasswordHasher<ApplicationUserModel>();
-
-    public async Task<SignInResponseModel> SignInUserAsync(SignInRequestModel model)
+    /// <summary>
+    /// SIGNS IN A USER WITH THE PROVIDED CREDENTIALS.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns> <summary>
+    /// 
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public async Task<SignInResponseModel> SignInAsync(SignInRequestModel model)
     {
-        // NULL CHECKS
-        if (model == null) { throw new ArgumentNullException("SignInRequestModel is null."); }
-        if (string.IsNullOrEmpty(model.Email)) { throw new ArgumentNullException("Email is null!"); }
-        if (string.IsNullOrEmpty(model.UserName)) { throw new ArgumentNullException("Username is null!"); }
-        if (string.IsNullOrEmpty(model.Password)) { throw new ArgumentNullException("Password is null!"); }
-
-        // GET USER FROM DATABASE
-        ApplicationUserResponse user = await _userRepository.GetUserByEmailAsync(model.Email);
-
-        if (user != null && user.IsSuccess == true && user.User == null)
+        ArgumentNullException.ThrowIfNull(model);
+        if (string.IsNullOrWhiteSpace(model.Password) == true ||
+            (string.IsNullOrWhiteSpace(model.Email) == true && string.IsNullOrWhiteSpace(model.UserName) == true))
         {
-            user = await _userRepository.GetUserByUsernameAsync(model.UserName);
+            return InvalidCredentials();
         }
 
-        // CHECK IF USER EXISTS AND RETURN FAILURE RESPONSE IF NOT
-        if (user == null) { return new() { IsSuccess = false, Message = ExternalMessages.EmailIsNotFound }; }
-        if (user.IsSuccess == false) { return new() { IsSuccess = false, Message = user.Message }; }
-        if (user.User == null) { return new() { IsSuccess = false, Message = ExternalMessages.EmailIsNotFound }; }
-        if (string.IsNullOrEmpty(user.User.PasswordHash)) { return new() { IsSuccess = false, Message = ExternalMessages.PasswordIsInvalid }; }
+        ApplicationUserModel? user = string.IsNullOrWhiteSpace(model.Email) == false
+            ? await userManager.FindByEmailAsync(model.Email)
+            : await userManager.FindByNameAsync(model.UserName!);
 
-        // CHECK IF PASSWORD IS VALID AND RETURN FAILURE RESPONSE IF NOT
-        PasswordVerificationResult passwordValidationResult;
+        if (user is null)
+            return InvalidCredentials();
+
+        // This API has no second-factor challenge flow. Never issue a password-only
+        // JWT for an account requiring two-factor authentication.
+        if (await userManager.GetTwoFactorEnabledAsync(user))
+            return InvalidCredentials();
+
+        SignInResult result;
         try
         {
-            passwordValidationResult = _passwordHasher.VerifyHashedPassword(user.User, user.User.PasswordHash, model.Password);
+            result = await signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: true);
         }
         catch (FormatException)
         {
-            // Invalid stored hashes cannot authenticate a user.
-            return new() { IsSuccess = false, Message = ExternalMessages.PasswordIsInvalid };
+            // Legacy malformed password hashes cannot authenticate.
+            return InvalidCredentials();
         }
 
-        if (passwordValidationResult == PasswordVerificationResult.Failed) { return new() { IsSuccess = false, Message = ExternalMessages.PasswordIsInvalid }; }
+        if (!result.Succeeded)
+            return InvalidCredentials();
 
-        JwtTokenResponse jwtTokenResponse = await _jwtTokenService.GenerateJwtTokenAsync(new JwtTokenModel
+        JwtTokenResponse token = await jwtTokenService.GenerateJwtTokenAsync(new JwtTokenModel
         {
-            Subject = Guid.NewGuid().ToString(),
-            UserName = user.User.UserName ?? user.User.Email,
-            Email = user.User.Email,
-            UserType = user.User.UserType
+            Subject = user.Id,
+            UserName = user.UserName ?? user.Email,
+            Email = user.Email,
+            UserType = user.UserType
         });
 
         return new SignInResponseModel
         {
-            IsSuccess = jwtTokenResponse.IsSuccess,
-            Token = jwtTokenResponse.Token,
-            Message = jwtTokenResponse.Message
+            IsSuccess = token.IsSuccess,
+            Token = token.Token,
+            Message = token.IsSuccess == true ? token.Message : ExternalMessages.InternalServerError
         };
     }
+
+    private static SignInResponseModel InvalidCredentials() => new()
+    {
+        IsSuccess = false,
+        AuthenticationFailed = true,
+        Message = "Unable to sign in with these credentials."
+    };
 }

@@ -157,11 +157,15 @@ public sealed class UserRepository : IUserRepository
             // CHECK IF USER EXISTS BY EMAIL AND PASSWORD OR USERNAME AND PASSWORD
             if (string.IsNullOrEmpty(model.Email) == false && string.IsNullOrEmpty(model.Password) == false)
             {
-                user = await _dBcontext.ApplicationUser.FirstOrDefaultAsync(u => u.Email == model.Email && u.PasswordHash == model.Password);
+                user = await _dBcontext.ApplicationUser
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Email == model.Email && u.PasswordHash == model.Password);
             }
             else if (string.IsNullOrEmpty(model.UserName) == false && string.IsNullOrEmpty(model.Password) == false)
             {
-                user = await _dBcontext.ApplicationUser.FirstOrDefaultAsync(u => u.UserName == model.UserName && u.PasswordHash == model.Password);
+                user = await _dBcontext.ApplicationUser
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.PasswordHash == model.Password);
             }
 
             // IF USER NOT FOUND, RETURN FAILURE RESPONSE
@@ -210,7 +214,10 @@ public sealed class UserRepository : IUserRepository
 
         try
         {
-            ApplicationUserModel? user = await _dBcontext.ApplicationUser.FirstOrDefaultAsync(u => u.Email == email);
+            ApplicationUserModel? user = await _dBcontext
+                .ApplicationUser
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
             {
@@ -250,7 +257,9 @@ public sealed class UserRepository : IUserRepository
 
         try
         {
-            ApplicationUserModel? user = await _dBcontext.ApplicationUser.FirstOrDefaultAsync(u => u.UserName == username);
+            ApplicationUserModel? user = await _dBcontext.ApplicationUser
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.UserName == username);
             
             if (user == null)
             {

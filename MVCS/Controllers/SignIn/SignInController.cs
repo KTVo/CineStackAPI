@@ -2,7 +2,7 @@ using BaseEFAPI.Helpers.Messages;
 using BaseEFAPI.MVCS.Models.Authorization;
 using BaseEFAPI.MVCS.Models.SignIn;
 using BaseEFAPI.MVCS.Services.Authentication.Interfaces;
-using BaseEFAPI.MVCS.Services.SignIn.Implementations;
+using BaseEFAPI.MVCS.Services.SignIn.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,49 +17,36 @@ public class SignInController(IJwtTokenService jwtTokenService, ISignInService s
     private readonly ISignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
     private readonly ILogger<SignInController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
+    /// <summary>
+    /// SIGNS IN A USER WITH THE PROVIDED CREDENTIALS
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost]
     [Route("signin")]
     public async Task<IActionResult> SignIn([FromBody] SignInRequestModel request)
     {
-        // NULL CHECKS
-        if (request == null)
+        if (request is null || string.IsNullOrWhiteSpace(request.Password) ||
+            (string.IsNullOrWhiteSpace(request.Email) && string.IsNullOrWhiteSpace(request.UserName)))
         {
-#pragma warning disable CA2254 // Template should be a static expression
-            _logger.LogWarning(MessageGenerator.RequestErrorMessage(className: "SignInController", methodName: "SignIn", requestBody: request, extraInfo: ExternalMessages.RequestBodyIsNull));
-#pragma warning restore CA2254 // Template should be a static expression
-
-            return BadRequest(ExternalMessages.RequestBodyIsNull);
-        }
-        if (string.IsNullOrEmpty(request.UserName) == true)
-        {
-#pragma warning disable CA2254 // Template should be a static expression
-            _logger.LogWarning(MessageGenerator.RequestErrorMessage(className: "SignInController", methodName: "SignIn", requestBody: request, extraInfo: ExternalMessages.UserNameIsNull));
-#pragma warning restore CA2254 // Template should be a static expression
-            return BadRequest(ExternalMessages.UserNameIsNull);
+            return BadRequest("Email or username and password are required.");
         }
 
-        if (string.IsNullOrEmpty(request.Password) == true)
-        {
-#pragma warning disable CA2254 // Template should be a static expression
-            _logger.LogWarning(MessageGenerator.RequestErrorMessage(className: "SignInController", methodName: "SignIn", requestBody: request, extraInfo: ExternalMessages.PasswordIsNull));
-#pragma warning restore CA2254 // Template should be a static expression
-            return BadRequest(ExternalMessages.PasswordIsNull);
-        }
-
-        SignInResponseModel response = await _signInService.SignInUserAsync(request);
-
-        if (response.IsSuccess == false)
-        {
-#pragma warning disable CA2254 // Template should be a static expression
-            _logger.LogWarning(MessageGenerator.RequestErrorMessage(className: "SignInController", methodName: "SignIn", requestBody: request, extraInfo: ExternalMessages.UserNameIsNull));
-#pragma warning restore CA2254 // Template should be a static expression
-
-            return StatusCode(StatusCodes.Status500InternalServerError, response.Message);
-        }
+        SignInResponseModel response = await _signInService.SignInAsync(request);
+        if (response.AuthenticationFailed)
+            return Unauthorized(response);
+        if (response.IsSuccess != true)
+            return StatusCode(StatusCodes.Status500InternalServerError, ExternalMessages.InternalServerError);
 
         return Ok(response);
     }
-    
+
+#if DEBUG
+    /// <summary>
+    /// DECRYPTS A JWE TOKEN
+    /// </summary>
+    /// <param name="tokenString"></param>
+    /// <returns></returns>
     [HttpPost]
     [Route("test/decrypt/jwe/token")]
     public async Task<IActionResult> DecryptJWEToken([FromBody] string tokenString)
@@ -85,7 +72,7 @@ public class SignInController(IJwtTokenService jwtTokenService, ISignInService s
 
         return Ok(response);
     }
-
+#endif
 
 
 }
