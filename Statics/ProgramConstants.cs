@@ -1,4 +1,4 @@
-namespace BaseEFAPI.Statics;
+namespace CineStackAPI.Statics;
 public static class ProgramConstants
 {
     public const string UserTypeUser = "USER";

@@ -1,6 +1,0 @@
-@BaseEFAPI_HostAddress = http://localhost:5173
-
-GET {{BaseEFAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

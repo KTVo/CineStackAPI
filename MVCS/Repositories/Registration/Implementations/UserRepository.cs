@@ -1,5 +1,6 @@
-using BaseEFAPI.MVCS.Models.SignIn;
-using BaseEFAPI.MVCS.Services.Context;
+using CineStackAPI.MVCS.Models.SignIn;
+using CineStackAPI.MVCS.Repositories.Responses;
+using CineStackAPI.MVCS.Services.Context;
 using Microsoft.EntityFrameworkCore;
 
 public sealed class UserRepository : IUserRepository

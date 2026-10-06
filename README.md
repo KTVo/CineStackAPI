@@ -1,4 +1,5 @@
 <!-- PROJECT SHIELDS -->
+
 [![Version][version-shield]][version-url]
 
 <!-- PAGE TITLE -->
@@ -8,8 +9,8 @@
 </div>
 
 <!-- DESCRIPTION -->
-> Base EF API is a barebone C# ASP.NET Web API using .Net 10 that will connect to any SQL database. To begin visit the program.cs to identify how to pass the connection string from appsettings.json through the IConfiguration.
 
+> Base EF API is a barebone C# ASP.NET Web API using .Net 10 that will connect to any SQL database. To begin visit the program.cs to identify how to pass the connection string from appsettings.json through the IConfiguration.
 
 ## Local configuration
 
@@ -38,17 +39,19 @@ Policy is configured in `MVCS/Services/Authentication/IdentityServiceCollectionE
 Back up the database and stop application writers. Apply `Database/UpgradeApplicationUserToIdentity.sql` first if the database does not already have the Identity columns. Then, with configuration pointing to the intended database, run:
 
 ```sh
-dotnet run --project BaseEFAPI.csproj -c Release -- --upgrade-identity
+dotnet run --project CineStackAPI.csproj -c Release -- --upgrade-identity
 ```
 
 This explicit maintenance command uses Identity's normalizer to backfill existing usernames/emails, initializes missing stamps, enables lockout for existing accounts, adds unique identifier indexes and the Identity claims/login/token tables, then exits without starting the web server. Password hashes and current failed-attempt/lockout-end values are preserved. Missing, oversized, or duplicate identifiers cause the transaction to fail; resolve them before retrying. Review any pre-existing Identity tables/indexes for schema compatibility. For a large user table, plan a separate batched migration; this command loads users into memory.
 
 The command requires schema-change permissions and is not run automatically on startup. Verify it against a restored SQL Server backup before production deployment. The automated tests use SQLite and do not validate SQL Server upgrade DDL.
 
-Run authentication integration tests with `dotnet test Tests/BaseEFAPI.Tests.csproj`.
+Run authentication integration tests with `dotnet test Tests/CineStackAPI.Tests.csproj`.
 
 <!-- TECHNICAL INFORMATION -->
+
 ## Overview
+
 [C#](https://learn.microsoft.com/en-us/dotnet/csharp/) | [EntityFramework](https://learn.microsoft.com/en-us/ef/core/get-started/overview/first-app?tabs=netcore-cli)
 
 ```
@@ -60,12 +63,13 @@ Run authentication integration tests with `dotnet test Tests/BaseEFAPI.Tests.csp
 ```
 
 ## Programs
-* [Visual Studios Community](https://visualstudio.microsoft.com/vs/community/)
-* [Visual Studios Code](https://code.visualstudio.com/)
-* [GitHub Desktop](https://desktop.github.com/)
 
+- [Visual Studios Community](https://visualstudio.microsoft.com/vs/community/)
+- [Visual Studios Code](https://code.visualstudio.com/)
+- [GitHub Desktop](https://desktop.github.com/)
 
 <!-- MARKDOWN LINKS & IMAGES || https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 <!--VERSION SHIELD-->
+
 [version-shield]: https://img.shields.io/badge/Version-0.1-blueviolet
-[version-url]: https://github.com/KTVo/BaseEFAPI
+[version-url]: https://github.com/KTVo/CineStackAPI

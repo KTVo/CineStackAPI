@@ -1,6 +1,6 @@
-using BaseEFAPI.MVCS.Models.Authorization;
+using CineStackAPI.MVCS.Models.Authorization;
 
-namespace BaseEFAPI.MVCS.Services.Authentication.Interfaces;
+namespace CineStackAPI.MVCS.Services.Authentication.Interfaces;
 
 public interface IJwtTokenService
 {

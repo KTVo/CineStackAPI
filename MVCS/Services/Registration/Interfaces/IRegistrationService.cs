@@ -1,4 +1,4 @@
-namespace BaseEFAPI.MVCS.Services.Registration.Interfaces;
+namespace CineStackAPI.MVCS.Services.Registration.Interfaces;
 
 public interface IRegistrationService
 {

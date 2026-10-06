@@ -1,0 +1,6 @@
+@CineStackAPI_HostAddress = http://localhost:5173
+
+GET {{CineStackAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

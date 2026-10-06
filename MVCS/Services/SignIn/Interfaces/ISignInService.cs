@@ -1,6 +1,6 @@
-using BaseEFAPI.MVCS.Models.SignIn;
+using CineStackAPI.MVCS.Models.SignIn;
 
-namespace BaseEFAPI.MVCS.Services.SignIn.Interfaces;
+namespace CineStackAPI.MVCS.Services.SignIn.Interfaces;
 
 public interface ISignInService
 {

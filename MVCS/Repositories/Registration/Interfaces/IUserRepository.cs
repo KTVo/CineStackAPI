@@ -1,3 +1,5 @@
+using CineStackAPI.MVCS.Repositories.Responses;
+
 public interface IUserRepository
 {
     Task<SignUpResponseModel> AddUserAsync(ApplicationUserModel user);

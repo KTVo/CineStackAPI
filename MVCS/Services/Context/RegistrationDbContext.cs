@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BaseEFAPI.MVCS.Services.Context;
+namespace CineStackAPI.MVCS.Services.Context;
 
 public sealed class RegistrationDbContext(DbContextOptions<RegistrationDbContext> options)
     : IdentityUserContext<ApplicationUserModel>(options)

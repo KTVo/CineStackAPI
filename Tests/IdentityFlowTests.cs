@@ -1,9 +1,9 @@
-using BaseEFAPI.MVCS.Models.Authorization;
-using BaseEFAPI.MVCS.Models.SignIn;
-using BaseEFAPI.MVCS.Services.Authentication;
-using BaseEFAPI.MVCS.Services.Authentication.Interfaces;
-using BaseEFAPI.MVCS.Services.Context;
-using BaseEFAPI.MVCS.Services.SignIn.Implementations;
+using CineStackAPI.MVCS.Models.Authorization;
+using CineStackAPI.MVCS.Models.SignIn;
+using CineStackAPI.MVCS.Services.Authentication;
+using CineStackAPI.MVCS.Services.Authentication.Interfaces;
+using CineStackAPI.MVCS.Services.Context;
+using CineStackAPI.MVCS.Services.SignIn.Implementations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-namespace BaseEFAPI.MVCS.Models.Authorization;
+namespace CineStackAPI.MVCS.Models.Authorization;
 
 public sealed class DecryptedJweClaim
 {

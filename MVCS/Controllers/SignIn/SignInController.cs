@@ -1,12 +1,12 @@
-using BaseEFAPI.Helpers.Messages;
-using BaseEFAPI.MVCS.Models.Authorization;
-using BaseEFAPI.MVCS.Models.SignIn;
-using BaseEFAPI.MVCS.Services.Authentication.Interfaces;
-using BaseEFAPI.MVCS.Services.SignIn.Interfaces;
+using CineStackAPI.Helpers.Messages;
+using CineStackAPI.MVCS.Models.Authorization;
+using CineStackAPI.MVCS.Models.SignIn;
+using CineStackAPI.MVCS.Services.Authentication.Interfaces;
+using CineStackAPI.MVCS.Services.SignIn.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BaseEFAPI.MVCS.Controllers.SignIn;
+namespace CineStackAPI.MVCS.Controllers.SignIn;
 
 [ApiController]
 [Route("api/v1/signin")]

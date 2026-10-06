@@ -1,7 +1,7 @@
-using BaseEFAPI.MVCS.Services.Context;
+using CineStackAPI.MVCS.Services.Context;
 using Microsoft.AspNetCore.Identity;
 
-namespace BaseEFAPI.MVCS.Services.Authentication;
+namespace CineStackAPI.MVCS.Services.Authentication;
 
 public static class IdentityServiceCollectionExtensions
 {

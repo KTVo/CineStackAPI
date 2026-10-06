@@ -1,3 +1,5 @@
+namespace CineStackAPI.MVCS.Models._Base;
+
 public class BaseResponseModel
 {
     public bool? IsSuccess { get; set; }

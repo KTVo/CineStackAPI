@@ -1,4 +1,4 @@
-using BaseEFAPI.MVCS.Services.Registration.Interfaces;
+using CineStackAPI.MVCS.Services.Registration.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 public sealed class RegistrationService(UserManager<ApplicationUserModel> userManager) : IRegistrationService

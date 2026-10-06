@@ -1,6 +1,8 @@
-namespace BaseEFAPI.MVCS.Models.Authorization;
+using CineStackAPI.MVCS.Models._Base;
 
-    public sealed class JwtTokenResponse : BaseResponseModel
-    {
-        public string? Token { get; set; }
-    }
+namespace CineStackAPI.MVCS.Models.Authorization;
+
+public sealed class JwtTokenResponse : BaseResponseModel
+{
+    public string? Token { get; set; }
+}

@@ -1,10 +1,11 @@
-using BaseEFAPI.Helpers.Messages;
-using BaseEFAPI.MVCS.Services.Registration.Interfaces;
-using BaseEFAPI.Statics;
+using CineStackAPI.Helpers.Messages;
+using CineStackAPI.MVCS.Models.SignUp;
+using CineStackAPI.MVCS.Services.Registration.Interfaces;
+using CineStackAPI.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BaseEFAPI.MVCS.Controllers.SignUp;
+namespace CineStackAPI.MVCS.Controllers.SignUp;
 
 [ApiController]
 [Route("api/v1/signup")]

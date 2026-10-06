@@ -1,4 +1,6 @@
-namespace BaseEFAPI.MVCS.Models.SignIn;
+using CineStackAPI.MVCS.Models._Base;
+
+namespace CineStackAPI.MVCS.Models.SignIn;
 
 public sealed class SignInRequestModel : BaseRequestModel
 {

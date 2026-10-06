@@ -1,8 +1,8 @@
-using BaseEFAPI.MVCS.Services.Context;
+using CineStackAPI.MVCS.Services.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BaseEFAPI.Database;
+namespace CineStackAPI.Database;
 
 public static class IdentityDatabaseUpgrade
 {

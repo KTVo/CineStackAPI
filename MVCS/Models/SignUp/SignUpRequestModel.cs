@@ -1,3 +1,7 @@
+using CineStackAPI.MVCS.Models._Base;
+
+namespace CineStackAPI.MVCS.Models.SignUp;
+
 public sealed class SignUpRequestModel : BaseRequestModel
 {
     public string? Username { get; set; }

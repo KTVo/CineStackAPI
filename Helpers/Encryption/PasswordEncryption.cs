@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace BaseEFAPI.Helpers.Encryption;
+namespace CineStackAPI.Helpers.Encryption;
 
 public static class PasswordEncryption
 {

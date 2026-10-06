@@ -1,11 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BaseEFAPI.MVCS.Models.Authorization;
-using BaseEFAPI.MVCS.Services.Authentication.Interfaces;
+using CineStackAPI.MVCS.Models.Authorization;
+using CineStackAPI.MVCS.Services.Authentication.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BaseEFAPI.MVCS.Services.Authentication.Implementations;
+namespace CineStackAPI.MVCS.Services.Authentication.Implementations;
 
 public sealed class JwtTokenService : IJwtTokenService
 {
